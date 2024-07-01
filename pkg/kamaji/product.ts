@@ -27,5 +27,17 @@ export function init($plugin: any, store: any) {
     },
   });
 
-  basicType([CLASTIX_NAME]);
+  virtualType({
+    labelKey: 'Helloworld',
+    name:     'Helloworld',
+    route:    {
+      name:   `c-cluster-${ CLASTIX_NAME }-helloworld`,
+      params: {
+        product: 'kubearmor'
+      }
+    }
+  });
+
+
+  basicType([CLASTIX_NAME,'Helloworld']);
 }

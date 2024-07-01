@@ -13,7 +13,22 @@ export default {
   data() {
     return {
       console: false,
+      installCommand: `helm repo add kubearmor https://kubearmor.github.io/charts
+helm repo update kubearmor
+helm upgrade --install kubearmor-operator kubearmor/kubearmor-operator -n kubearmor --create-namespace
+kubectl apply -f https://raw.githubusercontent.com/kubearmor/KubeArmor/main/pkg/KubeArmorOperator/config/samples/sample-config.yml`,
     };
+  },
+  methods: {
+    copyText() {
+      navigator.clipboard.writeText(this.installCommand)
+        .then(() => {
+          console.log("Copied to clipboard!"); // Optional: Success message
+        })
+        .catch((err) => {
+          console.error("Failed to copy:", err); // Optional: Error handling
+        });
+    },
   },
 
   computed: {
@@ -26,48 +41,24 @@ export default {
       );
     },
 
-    kamajiInstalled() {
-      return !!this.$store.getters[`${this.currentProduct.inStore}/schemaFor`](
-        "kamaji.clastix.io.tenantcontrolplane"
-      );
-    },
+    
   },
 };
 </script>
 
 <template>
   <div class="main">
-    <h2>Kamaji and Kamaji Console are not installed</h2>
+    <h2>Kubearmor operator is not installed</h2>
     <p>
       Please complete the installation process
       <a href="https://kamaji.clastix.io/" target="_blank">
-        following this guide </a
-      >.
+        following this guide
+      </a>.
     </p>
 
-    <div class="install-checks">
-      <div>
-        <input
-          type="checkbox"
-          id="cert-manager"
-          v-model="certManagerInstalled"
-          disabled
-        />
-        <label for="cert-manager">cert-manager</label>
-      </div>
-      <div>
-        <input
-          type="checkbox"
-          id="cert-manager"
-          v-model="kamajiInstalled"
-          disabled
-        />
-        <label for="cert-manager">kamaji</label>
-      </div>
-      <div>
-        <input type="checkbox" id="cert-manager" v-model="console" disabled />
-        <label for="cert-manager">kamaji console</label>
-      </div>
+    <div class="install-command">
+      <pre>{{ installCommand }}</pre>
+      <button @click="copyText">Copy to Clipboard</button>
     </div>
   </div>
 </template>
@@ -75,6 +66,12 @@ export default {
 <style>
 pre {
   text-align: left;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-family: monospace;
 }
 .main {
   text-align: center;
@@ -82,13 +79,20 @@ pre {
   width: 100%;
 }
 
-.install-checks {
+.install-command {
   margin: 20px auto;
-  gap: 20px;
-  font-size: medium;
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Stack elements vertically */
   align-items: center;
-  width: 100%;
+  gap: 10px;  /* Add some space between pre and button */
+}
+
+.install-command button {
+  padding: 5px 10px; /* Reduce button size */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
